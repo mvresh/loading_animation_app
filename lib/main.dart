@@ -43,7 +43,8 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin {
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
   AnimationController dotController;
   Animation<double> animation;
   int _counter = 0;
@@ -58,6 +59,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
       _counter++;
     });
   }
+
   Animation<Offset> offset;
   Animation<Offset> offset1;
   Animation<Offset> offset2;
@@ -76,29 +78,17 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
 
     offset1 = Tween<Offset>(begin: Offset.zero, end: Offset(0.0, -0.3))
         .animate(CurvedAnimation(
-        parent: dotController,
-        curve:JumpingCurve(0.0,0.4),
-    ));
-
-    offset2 = Tween<Offset>(begin: Offset.zero, end: Offset(0.0, -0.3))
-        .animate(CurvedAnimation(
       parent: dotController,
-      curve:JumpingCurve(0.2,0.6),
+      curve: JumpingCurve(0.0, 0.4),
     ));
 
-    offset3 = Tween<Offset>(begin: Offset.zero, end: Offset(0.0, -0.3))
-        .animate(CurvedAnimation(
-      parent: dotController,
-      curve:JumpingCurve(0.4,0.8),
-    ));
+    dotController.repeat();
 
-    dotController.forward();
-
-    animation.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        dotController.repeat();
-      }
-    });
+//    animation.addStatusListener((status) {
+//      if (status == AnimationStatus.completed) {
+//        dotController.repeat();
+//      }
+//    });
     //add status listener to get blinking effect
 //    dotController.addStatusListener((AnimationStatus buttonAnimationStatus) {
 //      if (buttonAnimationStatus == AnimationStatus.completed) {
@@ -111,9 +101,8 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
       setState(() {});
     });
     super.initState();
-
-
   }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -122,6 +111,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
+    var tween = Tween<Offset>(begin: Offset.zero, end: Offset(0.0, -0.3));
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
@@ -134,48 +124,53 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               SlideTransition(
-                position:offset1,
-                child: Container(
-                  decoration: new BoxDecoration(
-                      color: Colors.white,
-                      border: new Border.all(
-                          color: Colors.grey.shade600,
-                          width: 10.0,
-                          style: BorderStyle.solid
-                      ),
-                      shape: BoxShape.circle,
-                  ),
-                ),
-              ),
-              SlideTransition(
-                position:offset2,
+                position: tween.animate(CurvedAnimation(
+                  parent: dotController,
+                  curve: JumpingCurve(0.0, 0.4),
+                )),
                 child: Container(
                   decoration: new BoxDecoration(
                     color: Colors.white,
                     border: new Border.all(
                         color: Colors.grey.shade600,
                         width: 10.0,
-                        style: BorderStyle.solid
-                    ),
+                        style: BorderStyle.solid),
                     shape: BoxShape.circle,
                   ),
                 ),
               ),
               SlideTransition(
-                position:offset3,
+                position: tween.animate(CurvedAnimation(
+                  parent: dotController,
+                  curve: JumpingCurve(0.2, 0.6),
+                )),
                 child: Container(
                   decoration: new BoxDecoration(
                     color: Colors.white,
                     border: new Border.all(
                         color: Colors.grey.shade600,
                         width: 10.0,
-                        style: BorderStyle.solid
-                    ),
+                        style: BorderStyle.solid),
                     shape: BoxShape.circle,
                   ),
                 ),
               ),
-
+              SlideTransition(
+                position: tween.animate(CurvedAnimation(
+                  parent: dotController,
+                  curve: JumpingCurve(0.4, 0.8),
+                )),
+                child: Container(
+                  decoration: new BoxDecoration(
+                    color: Colors.white,
+                    border: new Border.all(
+                        color: Colors.grey.shade600,
+                        width: 10.0,
+                        style: BorderStyle.solid),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
             ],
           ),
           width: 300.0,
@@ -195,22 +190,18 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   }
 }
 
-class JumpingCurve extends Curve{
+class JumpingCurve extends Curve {
   double begin;
   double end;
-  JumpingCurve(this.begin,this.end);
+  JumpingCurve(this.begin, this.end);
   @override
   double transformInternal(double t) {
     double half = (begin + end) / 2;
-    if(t >= begin && t <= half){
-      return ((t - begin) / (half - begin)) ;
-
-    }
-    else if(t > half && t < end){
+    if (t >= begin && t <= half) {
+      return ((t - begin) / (half - begin));
+    } else if (t > half && t < end) {
       return ((end - t) / (end - half));
-    }
-
-    else{
+    } else {
       return 0;
     }
   }
